@@ -1,0 +1,32 @@
+{
+  "title": "zonemeen",
+  "subtitle": "I'm a passionate, self-taught, career-changed front-end developer since 2021",
+  "owner": {
+    "name": "zonemeen",
+    "email": "miqilin18@gmail.com"
+  },
+  "social": {
+    "github": "zonemeen",
+    "twitter": "zonemeen"
+  },
+  "newsletter": {
+    "showTwitterBanner": true,
+    "currentCount": "2,000",
+    "revueUsername": "zonemeen"
+  },
+  "seo": {
+    "title": "zonemeen's blog",
+    "description": "A front-end engineer's article sharing",
+    "author": "zonemeen",
+    "keywords": [
+      "blog",
+      "javascript",
+      "typescript",
+      "passionate",
+      "self-taught",
+      "career-changed",
+      "front-end developer"
+    ]
+  },
+  "cname": "zonemeen.github.io"
+}
