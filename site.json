@@ -7,11 +7,6 @@
     "github": "zonemeen",
     "twitter": "zonemeen"
   },
-  "newsletter": {
-    "showTwitterBanner": true,
-    "currentCount": "2,000",
-    "revueUsername": "zonemeen"
-  },
   "seo": {
     "title": "zonemeen's blog",
     "description": "A front-end engineer's article sharing",
