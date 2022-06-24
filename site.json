@@ -3,10 +3,18 @@
     "name": "zonemeen",
     "email": "miqilin18@gmail.com"
   },
-  "social": {
-    "github": "zonemeen",
-    "twitter": "zonemeen"
-  },
+  "social": [
+    {
+      "type": "Github",
+      "name": "zonemeen",
+      "url": "https://github.com/zonemeen"
+    },
+    {
+      "type": "Twitter",
+      "name": "zonemeen",
+      "url": "https://twitter.com/zonemeen"
+    }
+  ],
   "seo": {
     "title": "zonemeen's blog",
     "description": "A front-end engineer's article sharing",
