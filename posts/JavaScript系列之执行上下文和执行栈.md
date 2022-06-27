@@ -4,6 +4,8 @@ date: 2021-05-04
 permalink: /blog/2021/05/04/javascript-of-execution-context-and-execution-stack/
 ---
 
+[[toc]]
+
 如果你想成为一名优秀的 JavaScript 开发者，那你就必须了解 JavaScript 程序内部的执行机制。而执行上下文和执行栈是其关键概念之一， 理解执行上下文和执行栈同样有助于理解其他的 JavaScript 概念如提升机制、作用域和闭包等。
 
 执行上下文和执行栈是 JavaScript 的难点之一，所以本人尽量用通俗易懂的方式来阐述这些概念。

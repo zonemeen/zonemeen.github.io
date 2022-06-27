@@ -4,6 +4,8 @@ date: 2021-05-24
 permalink: /blog/2021/05/24/javascript-of-what-is-this/
 ---
 
+[[toc]]
+
 上一篇[《JavaScript 系列之作用域和作用域链》](https://zhuanlan.zhihu.com/p/69910449)中，了解到了执行上下文创建阶段的作用域链(Scope chain)，在这篇文章里，我们将讨论跟执行上下文直接相关的更多细节。
 
 再来回顾一下关于执行上下文的三个阶段生命周期：

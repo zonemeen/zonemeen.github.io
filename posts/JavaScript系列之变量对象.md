@@ -4,6 +4,8 @@ date: 2021-05-12
 permalink: /blog/2021/05/12/javascript-of-variable-object/
 ---
 
+[[toc]]
+
 JavaScript 编程的时候总规避不了声明变量和函数，但是解释器是如何并且在什么地方去查找这些变量和函数呢？接下来，再延续上一篇[《JavaScript 系列之执行上下文和执行栈》](https://luozongmin.com/2019/06/13/JavaScript%E7%B3%BB%E5%88%97%E4%B9%8B%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E5%92%8C%E6%89%A7%E8%A1%8C%E6%A0%88/)，通过对变量对象(Variable Object)的介绍对执行上下文有一个更深一步的了解。
 
 上一篇文章也提到了，一个执行上下文的生命周期可以分为三个阶段：

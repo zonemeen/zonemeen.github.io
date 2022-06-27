@@ -4,6 +4,8 @@ date: 2021-05-18
 permalink: /blog/2021/05/18/javascript-of-scopes-and-scopeChains/
 ---
 
+[[toc]]
+
 在上一篇[《JavaScript 系列之变量对象》](https://zhuanlan.zhihu.com/p/69142071)中，我们已经知道一个执行上下文的数据（函数的形参、函数及变量声明）作为属性储存在变量对象中。
 
 此外，我们也知道每次进入上下文时都会创建变量对象并填充初始值，并且值会在代码执行阶段进行更新，现在就对执行上下文做更深一步的了解。
