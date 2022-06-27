@@ -10,7 +10,7 @@ permalink: /blog/2021/05/24/javascript-of-what-is-this/
 
 再来回顾一下关于执行上下文的三个阶段生命周期：
 
-![](/images/scopechain/1.jpg)
+![](../static/assets/scopechain/1.jpg)
 
 本章将专门介绍与执行上下文创建阶段直接相关的最后一个细节——**this**是什么？以及它的指向到底是什么。
 
@@ -451,7 +451,7 @@ a.apply(obj);
 
 文字描述有点过多可能有点干涩，那么就看底下的这张流程图吧，我觉得这个图总结的很好（转自掘金小册-[前端面试之道](https://juejin.im/book/5bdc715fe51d454e755f75ef)），图中的流程只针对于单个规则。
 
-![](/images/this/1.png)
+![](../static/assets/this/1.png)
 
 ### 小结
 

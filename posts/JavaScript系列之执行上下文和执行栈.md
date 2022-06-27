@@ -40,7 +40,7 @@ permalink: /blog/2021/05/04/javascript-of-execution-context-and-execution-stack/
 
 执行完毕后执行上下文出栈并等待被垃圾回收
 
-![](/images/scopechain/1.jpg)
+![](../static/assets/scopechain/1.jpg)
 
 ### 执行上下文栈（Execution Context Stack）
 
@@ -70,19 +70,19 @@ a();
 
 首先，全局执行上下文（Global Execution Context）会被建立，这时候会一并建立`this`、`global object` (`window`)，在函数开始执行的过程中，`function a`和`b`由于 JS 提升机制的缘故会先被建立在内存中，接着才会开始逐行执行函数。
 
-![](/images/context/1.jpg)
+![](../static/assets/context/1.jpg)
 
 接着，代码会执行到`a( )`这个部分，这时候，会建立`a`的执行上下文（execution context），并且被放置到执行栈（execution stack）中。在这个 execution stack 中，最上面的 execution context 会是正在被执行的`a( )`。如下图：
 
-![](/images/context/2.jpg)
+![](../static/assets/context/2.jpg)
 
 `function a` 的 execution context 建立后，便会开始执行`function a`中的内容。由于在`function a( )` 里面有去执行`function b` ，因此，在这个 execution stack 中，接下来最上面会变成`function b` 的 execution context。如下图：
 
-![](/images/context/3.jpg)
+![](../static/assets/context/3.jpg)
 
 当`function b` 执行完之后，会从 execution stack 中离开，继续逐行执行`function a`。当`function a` 执行完之后，一样会从 execution stack 中抽离，再回到 Global Execution Context 逐行执行。如下图：
 
-![](/images/context/4.jpg)
+![](../static/assets/context/4.jpg)
 
 ### 不同执行上下文中的变量是不同的
 
@@ -107,7 +107,7 @@ a();
 
 你可以想像，如果我们在不同的 execution context 中去把`myVar`这个变量打出来，会得到什么结果呢？结果如下：
 
-![](/images/context/5.jpg)
+![](../static/assets/context/5.jpg)
 
 我们分别得到了 1、`undefined`和 2。为什么会这样呢？
 
@@ -115,25 +115,25 @@ a();
 
 首先，全局执行上下文（Global Execution Context）会被建立，由于变量提升的缘故，`myVar`、`function a`和`b`都会被建立并储存在内存中，接着便开始逐行执行函数。一开始会碰到`var myVar = 1`所以，最外层的`myVar`便被给值为 1，接着执行到了`console.log(myVar)`，这是在 global execution context 执行的，于是得到了第一个 1 的结果：
 
-![](/images/context/6.jpg)
+![](../static/assets/context/6.jpg)
 
 然后执行到了`a ( )`，于是建立了`a`的 execution context，这时候由于逐行执行的关系，会先执行到`var myVar = 2`，但因为这是在 function a 的 execution context 中，所以并不会影响到 global execution context 的`myVar`：
 
-![](/images/context/7.jpg)
+![](../static/assets/context/7.jpg)
 
 在执行完`function a`中的`var myVar = 2`后，继续逐行执行，于是执行到了`b ( )`，这时候，`function b`的 execution function 便被建立，而且会先去执行`function b`里面的内容：
 
-![](/images/context/8.jpg)
+![](../static/assets/context/8.jpg)
 
 `function b`的 execution function 建立后，会开始逐行执行`function b`里面的内容，于是读到了`var myVar`;，这时候在`function b`这个 execution context 中的`myVar`变量被建立，但是还没被赋值，所以会是`undefined`。和上面提到的一样，由于这个`myVar`是在`function b`中的 execution context 所建立，所以并不会影响到其他 execution context 的`myVar`，这时候执行到了`function b`的 execution context 中的`console.log(myVar)`，于是得到了第二个看到的`undefined`：
 
-![](/images/context/9.jpg)
+![](../static/assets/context/9.jpg)
 
 最后，`function b`执行完之后，会从 execution stack 中离开，继续回到`function a`中的`b( )`后逐行执行，也就是`console.log(myVar)`，这时候是在 function a 的 execution context 加以执行的，因此也就得到了结果中看到的第三个 2 了。
 
 最后由于`b ( )` 后面已经没有内容，`function a`执行完毕，这时候，`function a`也会从 execution stack 中抽离。
 
-![](/images/context/10.jpg)
+![](../static/assets/context/10.jpg)
 
 最后回到 Global Execution Context，如果函数中的`a( )`后面还有内容的话，会继续进行逐行执行。
 

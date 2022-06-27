@@ -12,7 +12,7 @@ permalink: /blog/2021/05/18/javascript-of-scopes-and-scopeChains/
 
 先来回顾一下关于执行上下文的三个阶段生命周期：
 
-![](/images/scopechain/1.jpg)
+![](../static/assets/scopechain/1.jpg)
 
 本章将专门介绍与执行上下文创建阶段直接相关的另一个细节——**作用域链**。
 
@@ -233,7 +233,7 @@ b(); // Uncaught ReferenceError: b is not defined
 
 而从`b() --> a() --> global execution context`这样的链，就称为**作用域链（Scope Chain）**：
 
-![](/images/scopechain/2.jpg)
+![](../static/assets/scopechain/2.jpg)
 
 如果我们把`function a`里面对于`myVar`的声明拿掉的话，它才会继续往外层搜寻`myVar`，直到找到全局作用域中的声明`myVar = 1`，这时候才会返回 1 的结果。
 
