@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>JavaScript系列之变量对象</title>
+    <meta name="description" content="A front-end engineer's article sharing"/>
+    <meta name="keywords" content="blog,javascript,typescript,passionate,self-taught,career-changed,front-end developer"/>
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Alegreya:400,400i|Lato:400,400i,700,900|Roboto+Mono:400,300">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"/>
+    <link rel="stylesheet" href="/css/normalize.css"/>
+    <link rel="stylesheet" href="/css/theme.css"/>
+    <link rel="stylesheet" href="/css/markdown.css"/>
+    <link rel="stylesheet" href="/css/prose.css"/>
+</head>
+<body>
+<nav class="nav prose">
+    <div class="nav__left">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </div>
+    <div class="nav__right">
+        
+            <a target="_blank" href="https://github.com/zonemeen" class="link-github">Github</a>
+        
+            <a target="_blank" href="https://twitter.com/zonemeen" class="link-github">Twitter</a>
+        
+    </div>
+</nav>
+
+<article class="mar-b-7 prose">
+    <header class="text-center">
+        <h1 class="mar-b-7">JavaScript系列之变量对象</h1>
+        <time class="mar-b-6" datetime="Wed, May 12, 2021">Wed, May 12, 2021</time>
+    </header>
+    <p><div class="table-of-contents"><ul><li><a href="#变量对象">变量对象 </a></li><li><a href="#全局上下文">全局上下文 </a></li><li><a href="#函数上下文">函数上下文 </a></li><li><a href="#执行阶段">执行阶段 </a><ul><li><a href="#进入执行上下文">进入执行上下文 </a></li><li><a href="#执行代码">执行代码 </a></li></ul></li></ul></div></p>
+<p>JavaScript 编程的时候总规避不了声明变量和函数，但是解释器是如何并且在什么地方去查找这些变量和函数呢？接下来，再延续上一篇<a href="https://luozongmin.com/2019/06/13/JavaScript%E7%B3%BB%E5%88%97%E4%B9%8B%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E5%92%8C%E6%89%A7%E8%A1%8C%E6%A0%88/" target="_blank" rel="noopener">《JavaScript 系列之执行上下文和执行栈》</a>，通过对变量对象(Variable Object)的介绍对执行上下文有一个更深一步的了解。</p>
+<p>上一篇文章也提到了，一个执行上下文的生命周期可以分为三个阶段：</p>
+<p><img src="/assets/scopechain/1.jpg" alt="" /></p>
+<p>详细了解执行上下文对于初学者来说极为重要，因为其中涉及到了变量对象，作用域链，this 等很多 JavaScript 初学者没完全搞懂，且极为重要的概念，它关系到我们能不能真正理解 JavaScript，真正理解也能更为轻松地胜任后续工作，在后面的文章中我们会一一详细介绍，这里我们先重点了解一下<strong>变量对象</strong>。</p>
+<h3 id="变量对象" tabindex="-1">变量对象 <a class="header-anchor" href="#变量对象" aria-hidden="true">#</a></h3>
+<p>变量对象（Variable Object）是一个与执行上下文相关的数据作用域，存储了在上下文中定义的<strong>变量</strong>和<strong>函数声明</strong>，先来看一段代码示例：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+  <span class="token keyword">function</span> <span class="token function">b</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+  <span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token function">c</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 10</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// function b(){}</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Uncaught ReferenceError: c is not defined</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>在上面的例子中，<code>foo（）</code>函数的变量对象包含<strong>变量<code>a</code><strong>和</strong>函数<code>b（）</code>的声明</strong>。这里要注意的一点是，函数表达式并不像函数声明一样包含在变量对象中，在示例中所看到的那样，访问 c（）函数会导致引用错误。因为变量对象是抽象的和特殊的，它不能在代码中访问，但会由 JavaScript 引擎处理。</p>
+<p>上面利用的是函数上下文下的变量对象来说明变量对象储存了什么，但变量对象还存在于全局上下文中，接下来就分别来聊聊全局上下文中和函数上下文中的变量对象吧。</p>
+<h3 id="全局上下文" tabindex="-1">全局上下文 <a class="header-anchor" href="#全局上下文" aria-hidden="true">#</a></h3>
+<p>以浏览器中为例，全局对象为<code>window</code>。 全局上下文有一个特殊的地方，它的变量对象，就是<code>window</code>全局对象，而这个特殊，在<code>this</code>指向上也同样适用，<code>this</code>也是指向<code>window</code>。</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token comment">// 以浏览器中为例，全局对象为window</span>
+<span class="token comment">// 全局上下文创建阶段</span>
+<span class="token comment">// VO 为变量对象（Variable Object）的缩写</span>
+windowEC <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token constant">VO</span><span class="token operator">:</span> Window<span class="token punctuation">,</span>
+  <span class="token literal-property property">scopeChain</span><span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token keyword">this</span><span class="token operator">:</span> Window<span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<p>除此之外，全局上下文的生命周期，与程序的生命周期一致，只要程序运行不结束，比如关掉浏览器窗口，全局上下文就会一直存在。其他所有的上下文环境，都能直接访问全局上下文的属性。</p>
+<h3 id="函数上下文" tabindex="-1">函数上下文 <a class="header-anchor" href="#函数上下文" aria-hidden="true">#</a></h3>
+<p>在上面已经提到了，变量对象存储了执行上下文中的变量和函数声明，但在函数上下文中，还多了一个<code>arguments(函数参数列表)</code>, 一个伪数组对象。</p>
+<p>这时变量对象的<strong>创建阶段</strong>会包括：</p>
+<ol>
+<li><strong>创建<code>arguments</code>对象</strong>。检查当前上下文中的参数，建立该对象下的属性与属性值。</li>
+<li><strong>检查当前上下文的函数声明，也就是使用 function 关键字声明的函数</strong>。在变量对象中以函数名建立一个属性，属性值为指向该函数所在内存地址的引用。如果变量对象已经存在相同名称的属性，则完全替换这个属性。</li>
+<li><strong>检查当前上下文中的变量声明</strong>（<code>var</code> 声明的变量），默认为 <code>undefined</code>；如果变量名称跟已经声明的形式参数或函数相同，为了防止同名的函数被修改为<code>undefined</code>，则会直接跳过变量声明，原属性值不会被修改。</li>
+</ol>
+<p><img src="/assets/variableobject/1.jpg" alt="" /></p>
+<p>对于第 3 点中的“跳过”一词想必大家会有一丝疑问？底下例子中既然按照上面的规则，变量声明的<code>foo</code>遇到函数声明的<code>foo</code>会跳过，可是为什么最后<code>foo</code>的输出结果仍然是被覆盖了？</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"I am function foo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">var</span> foo <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 10</span>
+</code></pre>
+<p>理由其实很简单，因为上面的三条规则仅仅适用于变量对象的<strong>创建过程</strong>，也就是执行上下文的创建过程。而<code>foo = 10</code>是在执行上下文的<strong>执行过程</strong>中运行的，输出结果自然会是 10。对比下例：</p>
+<pre class="language-javascript"><code class="language-javascript">console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// ƒ foo() { console.log('I am function foo') }</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"I am function foo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> foo <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 10</span>
+</code></pre>
+<p>为啥又是不一样的结果呢？其实它的执行顺序为：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token comment">// 首先将所有函数声明放入变量对象中，函数声明变量提升</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"I am function foo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 其次将所有变量声明放入变量对象中，但是因为foo已经存在同名函数，因此此时会跳过变量声明默认undefined的赋值</span>
+<span class="token comment">// var foo = undefined;</span>
+
+<span class="token comment">// 然后开始执行阶段代码的执行</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// ƒ foo() { console.log('I am function foo') }</span>
+
+<span class="token comment">// 在执行上下文的执行过程中运行</span>
+foo <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 10</span>
+</code></pre>
+<p>根据上面的规则，理解变量提升就变得十分简单了，我们也可以看出，<strong><code>function</code>声明会比<code>var</code>声明优先级更高一点</strong>。为了帮助大家更好的理解变量对象，我们再结合一个简单的例子来进行探讨。</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token number">2</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/* 结果为：
+undefined
+2
+*/</span>
+</code></pre>
+<p>根据上述的规则，理解变量提升后可以将执行顺序理解为：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token number">2</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">var</span> a<span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>这样是不是一目了然了呢？</p>
+<p>当然还需要注意的是，函数未进入执行阶段之前，变量对象中的属性都不能访问！但是进入执行阶段之后，变量对象（VO）转变为了活动对象（AO），然后开始进行执行阶段的操作。</p>
+<h3 id="执行阶段" tabindex="-1">执行阶段 <a class="header-anchor" href="#执行阶段" aria-hidden="true">#</a></h3>
+<p>当前进入执行阶段，变量对象（VO）激活成活动对象（AO），里面的属性都能被访问了，函数会顺序执行代码，改变变量对象的属性值，此阶段的执行上下文代码会分成两个阶段进行处理：</p>
+<ol>
+<li>进入执行上下文</li>
+<li>执行代码</li>
+</ol>
+<h4 id="进入执行上下文" tabindex="-1">进入执行上下文 <a class="header-anchor" href="#进入执行上下文" aria-hidden="true">#</a></h4>
+<p>当进入执行上下文时，这时候还没有执行代码。让我们看一个例子：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token parameter">a<span class="token punctuation">,</span> b</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> c <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+  <span class="token keyword">function</span> <span class="token function">d</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+  <span class="token keyword">var</span> <span class="token function-variable function">e</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token function">_e</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token function">x</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>当进入带有参数 10 的<code>foo</code>函数上下文时，AO 表现为如下：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token constant">AO</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">arguments</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token number">0</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+        <span class="token number">1</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">length</span><span class="token operator">:</span> <span class="token number">1</span>
+    <span class="token punctuation">}</span>
+    <span class="token literal-property property">a</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">b</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">c</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">d</span><span class="token operator">:</span> <span class="token operator">&lt;</span><span class="token keyword">function</span> reference to d<span class="token operator">></span><span class="token punctuation">,</span>
+    <span class="token literal-property property">e</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>x</code> 是函数表达式，所以不在变量对象当中，<code>e</code> 变量引用的值也是函数表达式，所以变量 <code>e</code> 本身是声明，所以在变量对象当中。</p>
+<h4 id="执行代码" tabindex="-1">执行代码 <a class="header-anchor" href="#执行代码" aria-hidden="true">#</a></h4>
+<p>这个阶段会按顺序执行代码，修改变量对象的属性值，紧接上面的例子，执行完成后 AO 如下：</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token constant">AO</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">arguments</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token number">0</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+        <span class="token number">1</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">length</span><span class="token operator">:</span> <span class="token number">1</span>
+    <span class="token punctuation">}</span>
+    <span class="token literal-property property">a</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">b</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">c</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">d</span><span class="token operator">:</span> <span class="token operator">&lt;</span>reference to <span class="token keyword">function</span> declaration d<span class="token operator">></span><span class="token punctuation">,</span>
+    <span class="token literal-property property">e</span><span class="token operator">:</span> <span class="token operator">&lt;</span>reference to Function expression to _e<span class="token operator">></span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>到这里变量对象的创建过程就介绍完了，让我们简短地总结一下：</p>
+<ol>
+<li>全局上下文的变量对象初始化是全局对象</li>
+<li>函数上下文的变量对象初始化只包括 <code>Arguments</code> 对象</li>
+<li>在进入执行上下文时会依次给变量对象<strong>添加形参</strong>、<strong>函数声明</strong>、<strong>变量声明</strong>等初始的属性值</li>
+<li>函数未进入执行阶段之前，变量对象中的属性都不能访问</li>
+<li>在执行代码阶段，会再次修改变量对象的属性值，并赋予该有的属性值</li>
+</ol>
+<p><strong>如果觉得文章对你有些许帮助，欢迎在<a href="https://github.com/miqilin21/miqilin21.github.io" target="_blank" rel="noopener">我的 GitHub 博客</a>点赞和关注，感激不尽！</strong></p>
+
+</article>
+
+<footer class="text-center mar-tb-6 prose">
+    © 2022 zonemeen, unless otherwise stated.
+</footer>
+
+<script>hljs.highlightAll();</script>
+</body>
+</html>
